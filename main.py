@@ -1,11 +1,12 @@
 import requests
 import urllib.request
-
+import os
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 
 
 Target_URL = "http://www.yluxuryonline.com/brands/3-1-phillip-lim.html?___SID=U"
+item_id = 0
 
 # content = urlopen(Target_URL).read()
 page = requests.get(Target_URL)
@@ -35,15 +36,17 @@ def getString(soup, className, tag):
 for e in url_list:
     page = requests.get(e["href"])
     soup = BeautifulSoup(page.content, 'html.parser')
+    file_path = str(item_id)
+    file = file_path + '/itemInfo.txt'
 
     # Text information
     name = getString(soup, 'product-name', 'div')
     price = getString(soup, 'price-box', 'span')
     description = getString(soup, 'product-description', 'li')
-
-    print(name)
-    print(price)
-    print(description)
+    f = open(file, 'w')
+    f.write(name)
+    f.write(price)
+    f.write(description)
 
     # Images
     img = [soup.find_all('img', id='image')[0]['src']]
@@ -52,10 +55,17 @@ for e in url_list:
         img += x.select('img')[0]['src'],
 
     # Save to local
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+
     cnt = 0
     for url in img:
-        urllib.request.urlretrieve(url, name + "/" + str(cnt))
-        cnt += 1
-    print(img)
 
-    print("*" * 130)
+        urllib.request.urlretrieve(url, file_path + '/' + str(cnt) + '.jpg')
+        cnt += 1
+    # print(img)
+
+    # print("*" * 130)
+
+    item_id += 1
+    # break
