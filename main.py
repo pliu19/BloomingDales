@@ -1,4 +1,5 @@
 import requests
+import urllib.request
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
@@ -34,10 +35,27 @@ def getString(soup, className, tag):
 for e in url_list:
     page = requests.get(e["href"])
     soup = BeautifulSoup(page.content, 'html.parser')
+
+    # Text information
     name = getString(soup, 'product-name', 'div')
     price = getString(soup, 'price-box', 'span')
     description = getString(soup, 'product-description', 'li')
+
     print(name)
     print(price)
     print(description)
+
+    # Images
+    img = [soup.find_all('img', id='image')[0]['src']]
+    more_img = soup.find_all('a', class_='cloud-zoom-gallery')
+    for x in more_img:
+        img += x.select('img')[0]['src'],
+
+    # Save to local
+    cnt = 0
+    for url in img:
+        urllib.request.urlretrieve(url, name + "/" + str(cnt))
+        cnt += 1
+    print(img)
+
     print("*" * 130)
