@@ -1,3 +1,6 @@
+import random
+from time import sleep
+
 import requests
 import urllib.request
 import os
@@ -38,6 +41,8 @@ for e in url_list:
     soup = BeautifulSoup(page.content, 'html.parser')
     file_path = str(item_id)
     file = file_path + '/itemInfo.txt'
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
 
     # Text information
     name = getString(soup, 'product-name', 'div')
@@ -47,22 +52,30 @@ for e in url_list:
     f.write(name)
     f.write(price)
     f.write(description)
+    f.close()
 
     # Images
-    img = [soup.find_all('img', id='image')[0]['src']]
-    more_img = soup.find_all('a', class_='cloud-zoom-gallery')
+    # img = [soup.find_all('img', id='image')[0]['src']]
+    # more_img = soup.find_all('a', class_='cloud-zoom-gallery')
+    img = soup.find('div', class_='more-views')
+    more_img = img.select('a')
+    # print(more_img[0]['href'])
+    imgs = []
     for x in more_img:
-        img += x.select('img')[0]['src'],
+        imgs += x['href'],
+    # print(imgs)
+
 
     # Save to local
-    if not os.path.exists(file_path):
-        os.makedirs(file_path)
-
     cnt = 0
-    for url in img:
-
-        urllib.request.urlretrieve(url, file_path + '/' + str(cnt) + '.jpg')
-        cnt += 1
+    for url in imgs:
+        try:
+            urllib.request.urlretrieve(url, file_path + '/' + str(cnt) + '.jpg')
+            cnt += 1
+        except:
+            print('miss 1 pic..')
+            pass
+    sleep(random.uniform(0.5, 1))
     # print(img)
 
     # print("*" * 130)
