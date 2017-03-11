@@ -5,8 +5,8 @@ import random
 from time import sleep
 from bs4 import BeautifulSoup
 
-Target_URL = "http://www.yluxuryonline.com/brands/3-1-phillip-lim.html?___SID=U"
-BRAND = "3.1 PHILLIP LIM"
+Target_URL = "http://www.yluxuryonline.com/brands/prada.html?___SID=U"
+BRAND = "prada"
 
 def get_link_list():
     page = requests.get(Target_URL)
@@ -23,7 +23,10 @@ def getString(soup, className, tag):
     res = ''
     upcoming_events_div = soup.find("div", class_=className)
     for e in upcoming_events_div.select(tag):
-        res += e.string + '\n'
+        if e.string is None:
+            break
+        else:
+            res += e.string + '\n'
 
     return res
 
