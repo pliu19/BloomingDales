@@ -5,7 +5,7 @@ import random
 from time import sleep
 from bs4 import BeautifulSoup
 
-Target_URL = "http://www.yluxuryonline.com/brands/prada.html?___SID=U"
+Target_URL = "http://www.yluxuryonline.com/brands/valentino.html?brand=90&limit=all&simu_categories=169_167_165"
 BRAND = "prada"
 
 def get_link_list():
